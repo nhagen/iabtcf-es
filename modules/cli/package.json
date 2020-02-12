@@ -27,6 +27,9 @@
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@typescript-eslint/parser": "^2.10.0",
     "eslint": "6.8.0",
+    "husky": "^4.2.2",
+    "lint-staged": "^10.0.7",
+    "prettier": "1.19.1",
     "source-map-support": "^0.5.12",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.0"
@@ -68,5 +71,14 @@
     "url": "https://github.com/chrispaterson/iabtcf.git",
     "directory": "modules/cli"
   },
-  "gitHead": "fb56d5db3fbb56677a07bc99fec207394476d87f"
+  "gitHead": "fb56d5db3fbb56677a07bc99fec207394476d87f",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --fix",
+    "*.{json,ts}": "prettier --write"
+  }
 }

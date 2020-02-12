@@ -26,6 +26,9 @@
     "@babel/core": "^7.7.5",
     "@babel/preset-env": "^7.7.6",
     "eslint": "6.8.0",
+    "husky": ">=4",
+    "lint-staged": ">=10",
+    "prettier": "1.19.1",
     "terser": "^4.4.3"
   },
   "publishConfig": {
@@ -62,5 +65,14 @@
     "url": "https://github.com/chrispaterson/iabtcf.git",
     "directory": "modules/stub"
   },
-  "gitHead": "fb56d5db3fbb56677a07bc99fec207394476d87f"
+  "gitHead": "fb56d5db3fbb56677a07bc99fec207394476d87f",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --fix",
+    "*.{json,ts}": "prettier --write"
+  }
 }
