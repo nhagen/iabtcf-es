@@ -1,14 +1,13 @@
-import {Fields} from '../../model';
-import {BooleanEncoder} from './BooleanEncoder';
-import {DateEncoder} from './DateEncoder';
-import {FixedVectorEncoder} from './FixedVectorEncoder';
-import {IntEncoder} from './IntEncoder';
-import {LangEncoder} from './LangEncoder';
-import {PurposeRestrictionVectorEncoder} from './PurposeRestrictionVectorEncoder';
-import {VendorVectorEncoder} from './VendorVectorEncoder';
+import { Fields } from '../../model';
+import { BooleanEncoder } from './BooleanEncoder';
+import { DateEncoder } from './DateEncoder';
+import { FixedVectorEncoder } from './FixedVectorEncoder';
+import { IntEncoder } from './IntEncoder';
+import { LangEncoder } from './LangEncoder';
+import { PurposeRestrictionVectorEncoder } from './PurposeRestrictionVectorEncoder';
+import { VendorVectorEncoder } from './VendorVectorEncoder';
 
 export class FieldEncoderMap {
-
   public static readonly [Fields.version]: typeof IntEncoder = IntEncoder;
   public static readonly [Fields.created]: typeof DateEncoder = DateEncoder;
   public static readonly [Fields.lastUpdated]: typeof DateEncoder = DateEncoder;
@@ -27,8 +26,7 @@ export class FieldEncoderMap {
   public static readonly [Fields.publisherCountryCode]: typeof LangEncoder = LangEncoder;
   public static readonly [Fields.vendorConsents]: typeof VendorVectorEncoder = VendorVectorEncoder;
   public static readonly [Fields.vendorLegitimateInterest]: typeof VendorVectorEncoder = VendorVectorEncoder;
-  public static readonly [Fields.publisherRestrictions]: typeof PurposeRestrictionVectorEncoder
-  = PurposeRestrictionVectorEncoder;
+  public static readonly [Fields.publisherRestrictions]: typeof PurposeRestrictionVectorEncoder = PurposeRestrictionVectorEncoder;
   public static readonly segmentType: typeof IntEncoder = IntEncoder;
   public static readonly [Fields.vendorsDisclosed]: typeof VendorVectorEncoder = VendorVectorEncoder;
   public static readonly [Fields.vendorsAllowed]: typeof VendorVectorEncoder = VendorVectorEncoder;
@@ -37,5 +35,4 @@ export class FieldEncoderMap {
   public static readonly [Fields.numCustomPurposes]: typeof IntEncoder = IntEncoder;
   public static readonly [Fields.publisherCustomConsents]: typeof FixedVectorEncoder = FixedVectorEncoder;
   public static readonly [Fields.publisherCustomLegitimateInterest]: typeof FixedVectorEncoder = FixedVectorEncoder;
-
 }

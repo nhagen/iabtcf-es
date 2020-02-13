@@ -1,78 +1,73 @@
 export class Json {
-
   /**
    * @param {string} jsonURL - full path to the json
    * @param {boolean} sendCookies - Whether or not to send the XMLHttpRequest with credentials or not
    * @param {number} [timeout] - optional timeout in milliseconds
    * @return {Promise} - resolves with parsed JSON
    */
-  public static fetch(jsonURL: string, sendCookies = false, timeout = 0): Promise<object> {
+  public static fetch(
+    jsonURL: string,
+    sendCookies = false,
+    timeout = 0
+  ): Promise<object> {
+    return new Promise(
+      (
+        resolve: (response: object) => void,
+        reject: (error: Error) => void
+      ): void => {
+        const req: XMLHttpRequest = new XMLHttpRequest();
 
-    return new Promise((resolve: (response: object) => void, reject: (error: Error) => void): void => {
-
-      const req: XMLHttpRequest = new XMLHttpRequest();
-
-      const onLoad: (evt: Event) => void = (): void => {
-
-        // is the response done
-        if (req.readyState == XMLHttpRequest.DONE ) {
-
-          /**
-           * anything that is not in the two hundreds is an error and if the
-           * responseText is null that means it failed
-           */
-          if (req.status >= 200 &&
-            req.status < 300 &&
-            req.responseType === 'json' &&
-            req.response) {
-
-            resolve(req.response);
-
-          } else {
-
-            reject(new Error(`HTTP Status: ${req.status} response type: ${req.responseType}`));
-
+        const onLoad: (evt: Event) => void = (): void => {
+          // is the response done
+          if (req.readyState == XMLHttpRequest.DONE) {
+            /**
+             * anything that is not in the two hundreds is an error and if the
+             * responseText is null that means it failed
+             */
+            if (
+              req.status >= 200 &&
+              req.status < 300 &&
+              req.responseType === 'json' &&
+              req.response
+            ) {
+              resolve(req.response);
+            } else {
+              reject(
+                new Error(
+                  `HTTP Status: ${req.status} response type: ${req.responseType}`
+                )
+              );
+            }
           }
+        };
 
-        }
+        const onError: (evt: Event) => void = (): void => {
+          reject(new Error('fetch error'));
+        };
 
-      };
+        const onAbort: (evt: Event) => void = (): void => {
+          reject(new Error('fetch aborted'));
+        };
 
-      const onError: (evt: Event) => void = (): void => {
+        const onTimeout: () => void = (): void => {
+          reject(new Error('Timeout ' + timeout + 'ms ' + jsonURL));
+        };
 
-        reject(new Error('fetch error'));
+        req.withCredentials = sendCookies;
 
-      };
+        req.addEventListener('load', onLoad);
+        req.addEventListener('error', onError);
+        req.addEventListener('abort', onAbort);
 
-      const onAbort: (evt: Event) => void = (): void => {
+        req.open('GET', jsonURL, true);
+        req.responseType = 'json';
 
-        reject(new Error('fetch aborted'));
+        // IE has a problem if this is before the open
+        req.timeout = timeout;
+        req.ontimeout = onTimeout;
 
-      };
-
-      const onTimeout: () => void = (): void => {
-
-        reject(new Error('Timeout ' + timeout + 'ms ' + jsonURL));
-
-      };
-
-      req.withCredentials = sendCookies;
-
-      req.addEventListener('load', onLoad);
-      req.addEventListener('error', onError);
-      req.addEventListener('abort', onAbort);
-
-      req.open('GET', jsonURL, true);
-      req.responseType = 'json';
-
-      // IE has a problem if this is before the open
-      req.timeout = timeout;
-      req.ontimeout = onTimeout;
-
-      req.send(null);
-
-    });
-
+        req.send(null);
+      }
+    );
   }
-
 }

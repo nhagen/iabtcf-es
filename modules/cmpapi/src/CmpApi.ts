@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Callback, ErrorCallback} from './callback';
-import {CmpApiModel} from './CmpApiModel';
-import {CommandMap} from './command/CommandMap';
-import {CustomCommands} from './CustomCommands';
-import {GetTCDataCommand} from './command/GetTCDataCommand';
-import {PolyFill} from '@iabtcf/util';
-import {TCDataCallback} from './callback/TCDataCallback';
-import {TCModel} from '@iabtcf/core';
+import { Callback, ErrorCallback } from './callback';
+import { CmpApiModel } from './CmpApiModel';
+import { CommandMap } from './command/CommandMap';
+import { CustomCommands } from './CustomCommands';
+import { GetTCDataCommand } from './command/GetTCDataCommand';
+import { PolyFill } from '@iabtcf/util';
+import { TCDataCallback } from './callback/TCDataCallback';
+import { TCModel } from '@iabtcf/core';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type PageCallHandler = (
@@ -24,7 +24,6 @@ type GetQueueFunction = () => TcfApiArgs[];
  * This is the only class that the CMP should create and interface with to set data for commands to utilize.
  */
 export class CmpApi {
-
   private readonly customCommands: CustomCommands;
   private readonly API_FUNCTION_NAME: string = '__tcfapi';
   private win: Window = window;
@@ -36,8 +35,11 @@ export class CmpApi {
    * @param {number} cmpVersion
    * @param {CustomCommands} customCommands
    */
-  public constructor(cmpId: number, cmpVersion: number, customCommands?: CustomCommands) {
-
+  public constructor(
+    cmpId: number,
+    cmpVersion: number,
+    customCommands?: CustomCommands
+  ) {
     new PolyFill();
 
     this.throwIfInvalidInt(cmpId, 'cmpId', 2);
@@ -47,9 +49,7 @@ export class CmpApi {
     CmpApiModel.cmpVersion = cmpVersion;
 
     if (customCommands) {
-
       this.customCommands = customCommands;
-
     }
 
     CmpApiModel.changeEventCallback = this.executeEvents;
@@ -63,54 +63,45 @@ export class CmpApi {
      * function.
      */
     try {
-
       // get queued commands
       this.stubQueue = (this.tcfapi as GetQueueFunction)();
-
     } catch (err) {
-
       // nothing to do here
-
     } finally {
-
       this.tcfapi = this.wrapPageCallHandler();
-
     }
-
   }
 
-  private throwIfInvalidInt(value: number, name: string, minValue: number): void | never {
-
-    if (!(typeof value === 'number' && Number.isInteger(value) && value >= minValue)) {
-
+  private throwIfInvalidInt(
+    value: number,
+    name: string,
+    minValue: number
+  ): void | never {
+    if (
+      !(
+        typeof value === 'number' &&
+        Number.isInteger(value) &&
+        value >= minValue
+      )
+    ) {
       throw new Error(`Invalid ${name}: ${value}`);
-
     }
-
   }
 
   /**
    * Throws an error if the Cmp has disabled the CmpApi
    */
   private throwIfCmpApiIsDisabled(): void {
-
     if (CmpApiModel.disabled) {
-
       throw new Error('CmpApi Disabled');
-
     }
-
   }
 
   private get tcfapi(): PageCallHandler {
-
     return window[this.API_FUNCTION_NAME];
-
   }
   private set tcfapi(func: PageCallHandler) {
-
     window[this.API_FUNCTION_NAME] = func;
-
   }
 
   /**
@@ -118,22 +109,16 @@ export class CmpApi {
    * @param {TCModel | null} tcModel
    */
   public set tcModel(tcModel: TCModel | null) {
-
     this.throwIfCmpApiIsDisabled();
     CmpApiModel.tcModel = tcModel;
 
     if (this.stubQueue) {
-
-      this.stubQueue.forEach((args: TcfApiArgs): void =>{
-
+      this.stubQueue.forEach((args: TcfApiArgs): void => {
         this.wrapPageCallHandler()(...args);
-
       });
 
       delete this.stubQueue;
-
     }
-
   }
 
   /**
@@ -141,10 +126,8 @@ export class CmpApi {
    * @param {boolean} isVisible
    */
   public set uiVisible(isVisible: boolean) {
-
     this.throwIfCmpApiIsDisabled();
     CmpApiModel.uiVisible = isVisible;
-
   }
 
   /**
@@ -152,32 +135,27 @@ export class CmpApi {
    * Cannot be undone
    */
   public disable(): void {
-
     CmpApiModel.disabled = true;
-
   }
 
   private executeEvents(): void {
-
     CmpApiModel.eventQueue.forEach((callback: TCDataCallback): void => {
-
       new GetTCDataCommand(callback);
-
     });
-
   }
 
   private wrapPageCallHandler(): PageCallHandler {
-
-    return (command: string, version: number, callback: Callback, param?: any): void => {
-
+    return (
+      command: string,
+      version: number,
+      callback: Callback,
+      param?: any
+    ): void => {
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const _this = this;
 
       _this.pageCallHandler(command, version, callback, param);
-
     };
-
   }
 
   /**
@@ -187,42 +165,35 @@ export class CmpApi {
    * @param {CallbackFunction} callback
    * @param {any} [param]
    */
-  private pageCallHandler(command: string, version: number, callback: Callback, param?: any): void | never {
-
+  private pageCallHandler(
+    command: string,
+    version: number,
+    callback: Callback,
+    param?: any
+  ): void | never {
     if (typeof command !== 'string') {
-
       (callback as ErrorCallback)(`invalid command: ${command}`, false);
       return;
-
     }
 
     if (version !== 2) {
-
       (callback as ErrorCallback)(`unsupported version: ${version}`, false);
       return;
-
     }
 
     if (typeof callback !== 'function') {
-
       throw new Error('invalid callback function');
-
     }
 
     if (this.customCommands && this.customCommands[command]) {
-
       this.customCommands[command](callback, param);
-
     } else if (CommandMap[command]) {
-
       new CommandMap[command](callback, param);
-
     } else {
-
-      (callback as ErrorCallback)(`CmpApi does not support the "${command}" command`, false);
-
+      (callback as ErrorCallback)(
+        `CmpApi does not support the "${command}" command`,
+        false
+      );
     }
-
   }
-
 }

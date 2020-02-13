@@ -21,5 +21,5 @@ export enum DisplayStatus {
    * User interface will not show (e.g. GDPR does not apply or TC data is current and does not need renewal)
    * @type {string}
    */
-  DISABLED = 'disabled',
-};
+  DISABLED = 'disabled'
+}

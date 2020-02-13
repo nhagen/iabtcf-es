@@ -1,8 +1,7 @@
-import {SequenceVersionMap, SVMItem} from './SequenceVersionMap';
-import {Segments, Fields} from '../../model';
+import { SequenceVersionMap, SVMItem } from './SequenceVersionMap';
+import { Segments, Fields } from '../../model';
 
 export class FieldSequence implements SequenceVersionMap {
-
   public readonly '1': SVMItem = {
     [Segments.core]: [
       Fields.version,
@@ -14,8 +13,8 @@ export class FieldSequence implements SequenceVersionMap {
       Fields.consentLanguage,
       Fields.vendorListVersion,
       Fields.purposeConsents,
-      Fields.vendorConsents,
-    ],
+      Fields.vendorConsents
+    ]
   };
   public readonly '2': SVMItem = {
     [Segments.core]: [
@@ -37,21 +36,16 @@ export class FieldSequence implements SequenceVersionMap {
       Fields.publisherCountryCode,
       Fields.vendorConsents,
       Fields.vendorLegitimateInterest,
-      Fields.publisherRestrictions,
+      Fields.publisherRestrictions
     ],
     [Segments.publisherTC]: [
       Fields.publisherConsents,
       Fields.publisherLegitimateInterest,
       Fields.numCustomPurposes,
       Fields.publisherCustomConsents,
-      Fields.publisherCustomLegitimateInterest,
+      Fields.publisherCustomLegitimateInterest
     ],
-    [Segments.vendorsAllowed]: [
-      Fields.vendorsAllowed,
-    ],
-    [Segments.vendorsDisclosed]: [
-      Fields.vendorsDisclosed,
-    ],
+    [Segments.vendorsAllowed]: [Fields.vendorsAllowed],
+    [Segments.vendorsDisclosed]: [Fields.vendorsDisclosed]
   };
-
 }

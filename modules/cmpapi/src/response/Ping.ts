@@ -1,12 +1,11 @@
-import {CmpStatus, DisplayStatus} from '../status';
-import {CmpApiModel} from '../CmpApiModel';
-import {Response} from './Response';
+import { CmpStatus, DisplayStatus } from '../status';
+import { CmpApiModel } from '../CmpApiModel';
+import { Response } from './Response';
 
 /**
  * Ping response builder
  */
 export class Ping extends Response {
-
   /**
    * true - CMP main script is loaded
    * false - still running stub
@@ -35,16 +34,11 @@ export class Ping extends Response {
   public gvlVersion: number;
 
   public constructor() {
-
     super();
 
     // only if the tcModel is defined
     if (CmpApiModel.tcModel && CmpApiModel.tcModel.vendorListVersion) {
-
       this.gvlVersion = +CmpApiModel.tcModel.vendorListVersion;
-
     }
-
   }
-
 }

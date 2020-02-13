@@ -6,7 +6,7 @@
  * @enum {string}
  */
 
-export enum CmpStatus{
+export enum CmpStatus {
   /**
    * CMP not yet loaded – stub still in place
    * @type {string}
@@ -27,5 +27,5 @@ export enum CmpStatus{
    * A CMP may set this status if, for any reason, it is unable to perform the operations in compliance with the TCF.
    * @type {string}
    */
-  ERROR = 'error',
-};
+  ERROR = 'error'
+}

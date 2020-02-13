@@ -1,26 +1,27 @@
-import {makeRandomInt} from './makeRandomInt';
+import { makeRandomInt } from './makeRandomInt';
 
-export function makeRandomIntArray(intsBetweenStart: number, intsBetweenEnd: number, length?: number): number[] {
-
+export function makeRandomIntArray(
+  intsBetweenStart: number,
+  intsBetweenEnd: number,
+  length?: number
+): number[] {
   const intSet = new Set<number>();
-  let retr:number[] = [];
+  let retr: number[] = [];
 
-  if(length !== undefined && intsBetweenEnd - intsBetweenStart <= length) {
+  if (length !== undefined && intsBetweenEnd - intsBetweenStart <= length) {
+    while (intSet.size != length) {
+      intSet.add(makeRandomInt(intsBetweenStart, intsBetweenEnd));
+    }
 
-      while(intSet.size != length) {
-        intSet.add(makeRandomInt(intsBetweenStart, intsBetweenEnd));
-      }
-      retr = Array.from(intSet);
-
- } else {
-
+    retr = Array.from(intSet);
+  } else {
     length = makeRandomInt(intsBetweenStart, intsBetweenEnd);
-    while(intSet.size != length) {
+
+    while (intSet.size != length) {
       intSet.add(makeRandomInt(intsBetweenStart, intsBetweenEnd));
     }
     retr = Array.from(intSet);
- }
+  }
 
-  return  retr;
-
+  return retr;
 }

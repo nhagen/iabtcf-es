@@ -1,14 +1,12 @@
-import {Vector} from '../../model';
-import {BitLength} from '../';
-import {IntEncoder} from './IntEncoder';
-import {BooleanEncoder} from './BooleanEncoder';
-import {FixedVectorEncoder} from './FixedVectorEncoder';
-import {VectorEncodingType} from './VectorEncodingType';
+import { Vector } from '../../model';
+import { BitLength } from '../';
+import { IntEncoder } from './IntEncoder';
+import { BooleanEncoder } from './BooleanEncoder';
+import { FixedVectorEncoder } from './FixedVectorEncoder';
+import { VectorEncodingType } from './VectorEncodingType';
 
 export class VendorVectorEncoder {
-
   public static encode(value: Vector): string {
-
     // collectors for range encoding
     const ranges: number[][] = [];
     let range: number[] = [];
@@ -23,14 +21,14 @@ export class VendorVectorEncoder {
     // some math
     const headerLength = BitLength.maxId + BitLength.encodingType;
     const bitFieldLength = headerLength + value.maxId;
-    const minRangeLength = (BitLength.vendorId*2 + BitLength.singleOrRange + BitLength.numEntries);
+    const minRangeLength =
+      BitLength.vendorId * 2 + BitLength.singleOrRange + BitLength.numEntries;
 
     // gets larger as we walk through the vector
     let rangeLength = headerLength + BitLength.numEntries;
 
     // walk through every value in the vector
     value.forEach((curValue: boolean, i): void => {
-
       // build our bitfield no matter what
       bitField += BooleanEncoder.encode(curValue);
 
@@ -42,7 +40,8 @@ export class VendorVectorEncoder {
        * The second check checks while we walk through the vector and abandons
        * building the ranges once it becomes larger
        */
-      rangeIsSmaller = (value.maxId > minRangeLength && rangeLength < bitFieldLength);
+      rangeIsSmaller =
+        value.maxId > minRangeLength && rangeLength < bitFieldLength;
 
       /**
        * if the curValue is true and our rangeLength is less than the bitField
@@ -52,7 +51,6 @@ export class VendorVectorEncoder {
        * encoding
        */
       if (rangeIsSmaller && curValue) {
-
         /**
          * Look ahead to see if this is the last value in our range
          */
@@ -60,7 +58,6 @@ export class VendorVectorEncoder {
 
         // if there isn't a next value, then we'll wrap up this range
         if (!nextValue) {
-
           /**
            * this is the last value of the range, so we'll push it on to the
            * end into position 1
@@ -75,61 +72,54 @@ export class VendorVectorEncoder {
 
           // clear the array for the next range
           range = [];
-
         } else if (range.length === 0) {
-
           // this is the first  value for this range
           range.push(i);
 
           // update our count with new range overhead
           rangeLength += BitLength.singleOrRange;
           rangeLength += BitLength.vendorId;
-
         }
-
       }
-
     });
 
     if (rangeIsSmaller) {
-
       retrString += VectorEncodingType.RANGE + '';
       retrString += this.buildRangeEncoding(ranges);
-
     } else {
-
       retrString += VectorEncodingType.FIELD + '';
       retrString += bitField;
-
     }
 
     return retrString;
-
   }
 
   public static decode(value: string): Vector {
-
     let vector: Vector;
     let index = 0;
-    const maxId: number = IntEncoder.decode(value.substr(index, BitLength.maxId));
+    const maxId: number = IntEncoder.decode(
+      value.substr(index, BitLength.maxId)
+    );
     index += BitLength.maxId;
-    const encodingType: VectorEncodingType = IntEncoder.decode(value.charAt(index));
+    const encodingType: VectorEncodingType = IntEncoder.decode(
+      value.charAt(index)
+    );
     index += BitLength.encodingType;
 
     /**
      * Range is handled in batches so we'll need a different decoding scheme
      */
     if (encodingType === VectorEncodingType.RANGE) {
-
       vector = new Vector();
 
-      const numEntries: number = IntEncoder.decode(value.substr(index, BitLength.numEntries));
+      const numEntries: number = IntEncoder.decode(
+        value.substr(index, BitLength.numEntries)
+      );
 
       index += BitLength.numEntries;
 
       // loop through each group of entries
-      for (let i = 0; i < numEntries; i ++) {
-
+      for (let i = 0; i < numEntries; i++) {
         // Ranges can represent a single id or a range of ids.
         const isIdRange: boolean = BooleanEncoder.decode(value.charAt(index));
 
@@ -139,58 +129,49 @@ export class VendorVectorEncoder {
          * regardless of whether or not it's a single entry or range, the next
          * set of bits is a vendor ID
          */
-        const firstId: number = IntEncoder.decode(value.substr(index, BitLength.vendorId));
+        const firstId: number = IntEncoder.decode(
+          value.substr(index, BitLength.vendorId)
+        );
 
         index += BitLength.vendorId;
 
         // if it's a range, the next set of bits is the second id
         if (isIdRange) {
-
-          const secondId: number = IntEncoder.decode(value.substr(index, BitLength.vendorId));
+          const secondId: number = IntEncoder.decode(
+            value.substr(index, BitLength.vendorId)
+          );
 
           index += BitLength.vendorId;
 
           // we'll need to set or unset all the vendor ids between the first and second
           for (let j = firstId; j <= secondId; j++) {
-
             vector.set(j);
-
           }
-
         } else {
-
           vector.set(firstId);
-
         }
-
       }
-
     } else {
-
       const bitField = value.substr(index, maxId);
 
       index += maxId;
       vector = FixedVectorEncoder.decode(bitField);
-
     }
 
     vector.bitLength = index;
 
     return vector;
-
   }
 
   private static buildRangeEncoding(ranges: number[][]): string {
-
     // describe the number of entries to follow
     const numEntries = ranges.length;
     let rangeString = IntEncoder.encode(numEntries, BitLength.numEntries);
 
     // each range
     ranges.forEach((range: number[]): void => {
-
       // is this range a single?
-      const single = (range.length === 1);
+      const single = range.length === 1;
 
       // first is the indicator of whether this is a single id or range (two)
       // 0 is single and range is 1
@@ -200,16 +181,11 @@ export class VendorVectorEncoder {
       rangeString += IntEncoder.encode(range[0], BitLength.vendorId);
 
       if (!single) {
-
         // add the second id if it exists
         rangeString += IntEncoder.encode(range[1], BitLength.vendorId);
-
       }
-
     });
 
     return rangeString;
-
   }
-
 }

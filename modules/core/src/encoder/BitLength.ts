@@ -1,6 +1,5 @@
-import {Fields} from '../model';
+import { Fields } from '../model';
 export class BitLength {
-
   public static readonly [Fields.cmpId]: number = 12;
   public static readonly [Fields.cmpVersion]: number = 12;
   public static readonly [Fields.consentLanguage]: number = 12;
@@ -32,5 +31,4 @@ export class BitLength {
   public static readonly segmentType: number = 3;
   public static readonly singleOrRange: number = 1;
   public static readonly vendorId: number = 16;
-
 }

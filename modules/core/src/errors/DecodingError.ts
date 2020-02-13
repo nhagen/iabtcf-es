@@ -4,7 +4,6 @@
  * @extends {Error}
  */
 class DecodingError extends Error {
-
   /**
    * constructor - constructs an DecodingError
    *
@@ -12,12 +11,9 @@ class DecodingError extends Error {
    * @return {undefined}
    */
   public constructor(msg: string) {
-
     super(msg);
     this.name = 'DecodingError';
-
   }
-
 }
 
-export {DecodingError};
+export { DecodingError };

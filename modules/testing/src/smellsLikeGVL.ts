@@ -1,6 +1,6 @@
-import {expect} from 'chai';
-export const smellsLikeGVL = (possibleGVL: object): void => {
+import { expect } from 'chai';
 
+export const smellsLikeGVL = (possibleGVL: object): void => {
   expect(possibleGVL, 'maybe gvl?').to.include([
     'gvlSpecificationVersion',
     'vendorListVersion',
@@ -11,7 +11,6 @@ export const smellsLikeGVL = (possibleGVL: object): void => {
     'features',
     'specialFeatures',
     'vendors',
-    'stacks',
+    'stacks'
   ]);
-
-}
+};

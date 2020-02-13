@@ -1,7 +1,7 @@
-import {IntMap} from '../IntMap';
-import {Feature} from './Feature';
-import {Purpose} from './Purpose';
-import {Stack} from './Stack';
+import { IntMap } from '../IntMap';
+import { Feature } from './Feature';
+import { Purpose } from './Purpose';
+import { Stack } from './Stack';
 
 export interface Declarations {
   gvlSpecificationVersion: number;

@@ -1,4 +1,4 @@
-import {GVLMapItem} from './GVLMapItem';
+import { GVLMapItem } from './GVLMapItem';
 export interface Vendor extends GVLMapItem {
   purposes: number[];
   legIntPurposes: number[];
@@ -11,4 +11,4 @@ export interface Vendor extends GVLMapItem {
   overflow?: {
     httpGetLimit: 32 | 128;
   };
-};
+}

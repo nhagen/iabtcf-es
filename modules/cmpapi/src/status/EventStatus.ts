@@ -18,5 +18,5 @@ export enum EventStatus {
    * and a CMP is prepared to respond to any calling scripts with the corresponding TC String.
    * @type {string}
    */
-  USER_ACTION_COMPLETE = 'useractioncomplete',
+  USER_ACTION_COMPLETE = 'useractioncomplete'
 }

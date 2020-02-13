@@ -4,7 +4,6 @@
  * @extends {Error}
  */
 class EncodingError extends Error {
-
   /**
    * constructor - constructs an EncodingError
    *
@@ -12,11 +11,8 @@ class EncodingError extends Error {
    * @return {undefined}
    */
   public constructor(msg: string) {
-
     super(msg);
     this.name = 'EncodingError';
-
   }
-
 }
-export {EncodingError};
+export { EncodingError };

@@ -4,7 +4,6 @@
  * @extends {Error}
  */
 class TCModelError extends Error {
-
   /**
    * constructor - constructs an TCModelError
    *
@@ -13,13 +12,12 @@ class TCModelError extends Error {
    * @return {undefined}
    */
 
-  public constructor(fieldName: string, passedValue: any, msg: string = '') { // eslint-disable-line 
+  public constructor(fieldName: string, passedValue: any, msg = '') {
+    // eslint-disable-line
 
     super(`invalid value ${passedValue} passed for ${fieldName} ${msg}`);
     this.name = 'TCModelError';
-
   }
-
 }
 
-export {TCModelError};
+export { TCModelError };

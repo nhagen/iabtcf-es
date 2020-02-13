@@ -1,20 +1,32 @@
-import {Cloneable} from './Cloneable';
-import {TCModelError} from './errors';
-import {GVL} from './GVL';
-import {PolyFill} from '@iabtcf/util';
+import { Cloneable } from './Cloneable';
+import { TCModelError } from './errors';
+import { GVL } from './GVL';
+import { PolyFill } from '@iabtcf/util';
 
-import {ConsentLanguages, Fields, IntMap, PurposeRestrictionVector, Vector} from './model';
-import {GVLMapItem, Purpose, Vendor, Feature} from './model/gvl';
+import {
+  ConsentLanguages,
+  Fields,
+  IntMap,
+  PurposeRestrictionVector,
+  Vector
+} from './model';
+import { GVLMapItem, Purpose, Vendor, Feature } from './model/gvl';
 
-export type TCModelPropType = number | Date | string | boolean | Vector | PurposeRestrictionVector;
+export type TCModelPropType =
+  | number
+  | Date
+  | string
+  | boolean
+  | Vector
+  | PurposeRestrictionVector;
 
 export class TCModel extends Cloneable<TCModel> {
-
   private static readonly MAX_ENCODING_VERSION: number = 2;
   /**
    * Set of available consent languages published by the IAB
    */
-  public static readonly consentLanguages: ConsentLanguages = GVL.consentLanguages;
+  public static readonly consentLanguages: ConsentLanguages =
+    GVL.consentLanguages;
 
   private isServiceSpecific_ = false;
   private useNonStandardStacks_ = false;
@@ -130,20 +142,16 @@ export class TCModel extends Cloneable<TCModel> {
    * @param {GVL} [gvl]
    */
   public constructor(gvl?: GVL) {
-
     super();
 
     new PolyFill();
 
     if (gvl) {
-
       this.gvl = gvl;
-
     }
 
     this.created = new Date();
     this.updated();
-
   }
 
   /**
@@ -151,7 +159,6 @@ export class TCModel extends Cloneable<TCModel> {
    * @param {GVL} gvl
    */
   public set gvl(gvl: GVL) {
-
     /**
      * Set the reference but wait to see the other values for when the data populates
      */
@@ -159,22 +166,17 @@ export class TCModel extends Cloneable<TCModel> {
     this.publisherRestrictions.gvl = gvl;
 
     gvl.readyPromise.then((): void => {
-
       this.vendorListVersion_ = gvl.vendorListVersion;
       this.policyVersion_ = gvl.tcfPolicyVersion;
       this.consentLanguage_ = gvl.language;
-
     });
-
   }
 
   /**
    * @return {GVL} the gvl instance set on this TCModel instance
    */
   public get gvl(): GVL {
-
     return this.gvl_;
-
   }
 
   /**
@@ -184,23 +186,15 @@ export class TCModel extends Cloneable<TCModel> {
    * @throws {TCModelError} if the value is not an integer greater than 1 as those are not valid.
    */
   public set [Fields.cmpId](integer: number | string) {
-
     if (Number.isInteger(+integer) && integer > 1) {
-
       this.cmpId_ = +integer;
-
     } else {
-
       throw new TCModelError('cmpId', integer);
-
     }
-
   }
 
   public get [Fields.cmpId](): number | string {
-
     return this.cmpId_;
-
   }
 
   /**
@@ -213,22 +207,14 @@ export class TCModel extends Cloneable<TCModel> {
    * @throws {TCModelError} if the value is not an integer greater than 1 as those are not valid.
    */
   public set [Fields.cmpVersion](integer: number | string) {
-
     if (Number.isInteger(+integer) && integer > -1) {
-
       this.cmpVersion_ = +integer;
-
     } else {
-
       throw new TCModelError('cmpVersion', integer);
-
     }
-
   }
   public get [Fields.cmpVersion](): number | string {
-
     return this.cmpVersion_;
-
   }
 
   /**
@@ -242,22 +228,14 @@ export class TCModel extends Cloneable<TCModel> {
    * @throws {TCModelError} if the value is not an integer greater than 0 as those are not valid.
    */
   public set [Fields.consentScreen](integer: number | string) {
-
     if (Number.isInteger(+integer) && integer > -1) {
-
       this.consentScreen_ = +integer;
-
     } else {
-
       throw new TCModelError('consentScreen', integer);
-
     }
-
   }
   public get [Fields.consentScreen](): number | string {
-
     return this.consentScreen_;
-
   }
 
   /**
@@ -268,30 +246,20 @@ export class TCModel extends Cloneable<TCModel> {
    * @throws {TCModelError} if the value is not a length-2 string of alpha characters
    */
   public set [Fields.consentLanguage](lang: string) {
-
     lang = lang.toUpperCase();
 
     if (TCModel.consentLanguages.has(lang)) {
-
       this.consentLanguage_ = lang;
 
       if (this.gvl && GVL.baseUrl !== undefined) {
-
         this.gvl.changeLanguage(lang);
-
       }
-
     } else {
-
       throw new TCModelError('consentLanguage', lang);
-
     }
-
   }
   public get [Fields.consentLanguage](): string {
-
     return this.consentLanguage_;
-
   }
 
   /**
@@ -302,22 +270,14 @@ export class TCModel extends Cloneable<TCModel> {
    * @throws {TCModelError} if the value is not a length-2 string of alpha characters
    */
   public set [Fields.publisherCountryCode](countryCode: string) {
-
     if (/^([A-z]){2}$/.test(countryCode)) {
-
       this.publisherCountryCode_ = countryCode.toUpperCase();
-
     } else {
-
       throw new TCModelError('publisherCountryCode', countryCode);
-
     }
-
   }
   public get [Fields.publisherCountryCode](): string {
-
     return this.publisherCountryCode_;
-
   }
 
   /**
@@ -329,31 +289,19 @@ export class TCModel extends Cloneable<TCModel> {
    * @throws {TCModelError} if the value is not an integer greater than 0 as those are not valid.
    */
   public set [Fields.vendorListVersion](integer: number | string) {
-
     if (Number.isInteger(+integer) && integer > 0) {
-
       if (!this.gvl) {
-
         this.vendorListVersion_ = +integer;
-
       } else if (this.gvl.vendorListVersion !== +integer) {
-
         this.gvl = new GVL(+integer);
-
       }
-
     } else {
-
       throw new TCModelError('vendorListVersion', integer);
-
     }
-
   }
 
   public get [Fields.vendorListVersion](): number | string {
-
     return this.vendorListVersion_;
-
   }
 
   /**
@@ -371,22 +319,14 @@ export class TCModel extends Cloneable<TCModel> {
    * @throws {TCModelError} if the value is not an integer greater than 1 as those are not valid.
    */
   public set [Fields.policyVersion](integer: number | string) {
-
     if (Number.isInteger(+integer) && integer > 1) {
-
       this.policyVersion_ = +integer;
-
     } else {
-
       throw new TCModelError('policyVersion', integer);
-
     }
-
   }
   public get [Fields.policyVersion](): number | string {
-
     return this.policyVersion_;
-
   }
 
   /**
@@ -399,22 +339,22 @@ export class TCModel extends Cloneable<TCModel> {
    * @throws {TCModelError} if the value is not either 1 or 2
    */
   public set [Fields.version](integer: number | string) {
-
-    if (Number.isInteger(+integer) && +integer > 0 && +integer <= TCModel.MAX_ENCODING_VERSION) {
-
+    if (
+      Number.isInteger(+integer) &&
+      +integer > 0 &&
+      +integer <= TCModel.MAX_ENCODING_VERSION
+    ) {
       this.version_ = +integer;
-
     } else {
-
-      throw new TCModelError('version', integer, `min is 1, max version is ${TCModel.MAX_ENCODING_VERSION}`);
-
+      throw new TCModelError(
+        'version',
+        integer,
+        `min is 1, max version is ${TCModel.MAX_ENCODING_VERSION}`
+      );
     }
-
   }
   public get [Fields.version](): number | string {
-
     return this.version_;
-
   }
 
   /**
@@ -429,15 +369,11 @@ export class TCModel extends Cloneable<TCModel> {
    * restrictions.
    */
   public set [Fields.isServiceSpecific](bool: boolean) {
-
     this.isServiceSpecific_ = bool;
-
-  };
+  }
   public get [Fields.isServiceSpecific](): boolean {
-
     return this.isServiceSpecific_;
-
-  };
+  }
 
   /**
    * Non-standard stacks means that a CMP is using publisher-customized stack
@@ -449,15 +385,11 @@ export class TCModel extends Cloneable<TCModel> {
    * @param {boolean} bool - value to set
    */
   public set [Fields.useNonStandardStacks](bool: boolean) {
-
     this.useNonStandardStacks_ = bool;
-
-  };
+  }
   public get [Fields.useNonStandardStacks](): boolean {
-
     return this.useNonStandardStacks_;
-
-  };
+  }
 
   /**
    * `false` There is no special Purpose 1 status.
@@ -472,15 +404,11 @@ export class TCModel extends Cloneable<TCModel> {
    * @param {boolean} bool
    */
   public set [Fields.purposeOneTreatment](bool: boolean) {
-
     this.purposeOneTreatment_ = bool;
-
-  };
+  }
   public get [Fields.purposeOneTreatment](): boolean {
-
     return this.purposeOneTreatment_;
-
-  };
+  }
 
   /**
    * setAllVendorConsents - sets all vendors on the GVL Consent (true)
@@ -488,9 +416,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public setAllVendorConsents(): void {
-
     this.vendorConsents.setAll<Vendor>(this.gvl.vendors);
-
   }
 
   /**
@@ -499,9 +425,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public unsetAllVendorConsents(): void {
-
     this.vendorConsents.empty();
-
   }
 
   /**
@@ -510,9 +434,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public setAllVendorsDisclosed(): void {
-
     this.vendorsDisclosed.setAll<Vendor>(this.gvl.vendors);
-
   }
 
   /**
@@ -521,9 +443,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public unsetAllVendorsDisclosed(): void {
-
     this.vendorsDisclosed.empty();
-
   }
 
   /**
@@ -532,9 +452,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public setAllVendorsAllowed(): void {
-
     this.vendorsAllowed.setAll<Vendor>(this.gvl.vendors);
-
   }
 
   /**
@@ -543,9 +461,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public unsetAllVendorsAllowed(): void {
-
     this.vendorsAllowed.empty();
-
   }
 
   /**
@@ -554,9 +470,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public setAllVendorLegitimateInterest(): void {
-
     this.vendorLegitimateInterest.setAll<Vendor>(this.gvl.vendors);
-
   }
 
   /**
@@ -565,9 +479,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public unsetAllVendorLegitimateInterest(): void {
-
     this.vendorLegitimateInterest.empty();
-
   }
 
   /**
@@ -576,9 +488,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public setAllPurposeConsents(): void {
-
     this.purposeConsents.setAll<Purpose>(this.gvl.purposes);
-
   }
 
   /**
@@ -587,9 +497,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public unsetAllPurposeConsents(): void {
-
     this.purposeConsents.empty();
-
   }
 
   /**
@@ -598,9 +506,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public setAllPurposeLegitimateInterest(): void {
-
     this.purposeLegitimateInterest.setAll<Purpose>(this.gvl.purposes);
-
   }
 
   /**
@@ -609,9 +515,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public unsetAllPurposeLegitimateInterest(): void {
-
     this.purposeLegitimateInterest.empty();
-
   }
 
   /**
@@ -620,9 +524,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public setAllSpecialFeatureOptIns(): void {
-
     this.specialFeatureOptIns.setAll<Feature>(this.gvl.specialFeatures);
-
   }
 
   /**
@@ -631,9 +533,7 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public unsetAllSpecialFeatureOptIns(): void {
-
     this.specialFeatureOptIns.empty();
-
   }
 
   /**
@@ -648,13 +548,11 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public setAll(): void {
-
     this.setAllVendorConsents();
     this.setAllPurposeLegitimateInterest();
     this.setAllSpecialFeatureOptIns();
     this.setAllPurposeConsents();
     this.setAllVendorLegitimateInterest();
-
   }
 
   /**
@@ -669,50 +567,38 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public unsetAll(): void {
-
     this.unsetAllVendorConsents();
     this.unsetAllPurposeLegitimateInterest();
     this.unsetAllSpecialFeatureOptIns();
     this.unsetAllPurposeConsents();
     this.unsetAllVendorLegitimateInterest();
-
   }
 
   public get numCustomPurposes(): number {
-
     let len = 0;
 
     if (this.customPurposes) {
-
       len = Object.keys(this.customPurposes).length;
-
     }
 
     return len;
-
   }
 
   public set numCustomPurposes(num: number) {
-
     if (!this.customPurposes) {
-
       this.customPurposes = {};
 
       for (let i = 0; i < num; i++) {
-
         const id: string = (i + 1).toString();
 
         this.customPurposes[id] = {
-          id: i+1,
+          id: i + 1,
           name: `publisher purpose ${id}`,
           description: `publisher purpose description${id}`,
-          descriptionLegal: `publisher purpose legal description ${id}`,
+          descriptionLegal: `publisher purpose legal description ${id}`
         };
-
       }
-
     }
-
   }
 
   /**
@@ -722,9 +608,7 @@ export class TCModel extends Cloneable<TCModel> {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private isGVLMapItem(obj: any): obj is GVLMapItem {
-
     return typeof obj.id === 'number' && typeof obj.name === 'string';
-
   }
 
   /**
@@ -733,9 +617,6 @@ export class TCModel extends Cloneable<TCModel> {
    * @return {void}
    */
   public updated(): void {
-
     this.lastUpdated = new Date();
-
   }
-
 }

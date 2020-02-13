@@ -1,5 +1,4 @@
 export class ConsentLanguages {
-
   private static readonly langSet: Set<string> = new Set([
     'EN',
     'BG',
@@ -24,25 +23,18 @@ export class ConsentLanguages {
     'RO',
     'SK',
     'SL',
-    'SV',
+    'SV'
   ]);
 
   public has(key: string): boolean {
-
     return ConsentLanguages.langSet.has(key);
-
   }
 
   public forEach(callback: (key: string) => void): void {
-
     ConsentLanguages.langSet.forEach(callback);
-
   }
 
   public get size(): number {
-
     return ConsentLanguages.langSet.size;
-
   }
-
 }

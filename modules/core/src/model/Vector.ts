@@ -1,7 +1,7 @@
-import {Cloneable} from '../Cloneable';
-import {TCModelError} from '../errors';
-import {IntMap} from './IntMap';
-import {PolyFill} from '@iabtcf/util';
+import { Cloneable } from '../Cloneable';
+import { TCModelError } from '../errors';
+import { IntMap } from './IntMap';
+import { PolyFill } from '@iabtcf/util';
 
 type IdOrIds = number | number[];
 export type IdBoolTuple = [number, boolean];
@@ -10,13 +10,10 @@ export type IdBoolTuple = [number, boolean];
  * Vector class is like a Set except it keeps track of a max id
  */
 class Vector extends Cloneable<Vector> implements Iterable<IdBoolTuple> {
-
   public constructor() {
-
     super();
 
     new PolyFill();
-
   }
   /**
    * if this originatd from an encoded string we'll need a place to store the
@@ -29,14 +26,10 @@ class Vector extends Cloneable<Vector> implements Iterable<IdBoolTuple> {
    */
   private set_: Set<number> = new Set<number>();
 
-  public* [Symbol.iterator](): Iterator<IdBoolTuple> {
-
+  public *[Symbol.iterator](): Iterator<IdBoolTuple> {
     for (let i = 1; i <= this.maxId; i++) {
-
       yield [i, this.has(i)] as IdBoolTuple;
-
     }
-
   }
 
   /**
@@ -45,9 +38,7 @@ class Vector extends Cloneable<Vector> implements Iterable<IdBoolTuple> {
    * @return {number} - the highest id in this Vector
    */
   public get maxId(): number {
-
     return this.maxId_;
-
   }
 
   /**
@@ -57,12 +48,10 @@ class Vector extends Cloneable<Vector> implements Iterable<IdBoolTuple> {
    * @return {boolean} - value of that key, if never set it will be false
    */
   public has(id: number): boolean {
-
     /**
      * if it exists in the set we'll return true
      */
     return this.set_.has(id);
-
   }
   /**
    * unset
@@ -71,13 +60,9 @@ class Vector extends Cloneable<Vector> implements Iterable<IdBoolTuple> {
    * @return {void}
    */
   public unset(id: IdOrIds): void {
-
     if (Array.isArray(id)) {
-
       id.forEach((id): void => this.unset(id));
-
     } else {
-
       this.set_.delete(id);
 
       /**
@@ -86,22 +71,16 @@ class Vector extends Cloneable<Vector> implements Iterable<IdBoolTuple> {
       this.bitLength = 0;
 
       if (id === this.maxId) {
-
         /**
          * aww bummer we lost our maxId... now we've got to search through
          * all the ids and find the biggest one.
          */
         this.maxId_ = 0;
         this.set_.forEach((id: number): void => {
-
           this.maxId_ = Math.max(this.maxId, id);
-
         });
-
       }
-
     }
-
   }
 
   /**
@@ -113,20 +92,14 @@ class Vector extends Cloneable<Vector> implements Iterable<IdBoolTuple> {
    * @return {void}
    */
   public set(id: IdOrIds): void {
-
     if (Array.isArray(id)) {
-
       id.forEach((id): void => this.set(id));
-
     } else {
-
       if (!(Number.isInteger(id) && id > 0)) {
-
         /**
          * Super not cool to try and set something that's not a positive integer
          */
         throw new TCModelError('set()', id, 'must be positive integer');
-
       }
 
       this.set_.add(id);
@@ -135,14 +108,10 @@ class Vector extends Cloneable<Vector> implements Iterable<IdBoolTuple> {
        * if bitLength was set before, it must now be unset
        */
       this.bitLength = 0;
-
     }
-
   }
   public empty(): void {
-
     this.set_ = new Set<number>();
-
   }
 
   /**
@@ -157,30 +126,19 @@ class Vector extends Cloneable<Vector> implements Iterable<IdBoolTuple> {
    * @param {number} id - the id number of the current iteration
    */
   public forEach(callback: (value: boolean, id: number) => void): void {
-
     for (const kvp of this) {
-
       callback(kvp[1], kvp[0]);
-
     }
-
   }
 
   public get size(): number {
-
     return this.set_.size;
-
   }
 
   public setAll<T>(intMap: IntMap<T>): void {
-
     Object.keys(intMap).forEach((strId: string): void => {
-
       this.set(+strId);
-
     });
-
   }
-
 }
-export {Vector};
+export { Vector };

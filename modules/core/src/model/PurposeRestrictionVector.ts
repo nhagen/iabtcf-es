@@ -1,12 +1,13 @@
-import {PurposeRestriction} from './PurposeRestriction';
-import {BinarySearchTree} from './BinarySearchTree';
-import {RestrictionType} from './RestrictionType';
-import {GVL} from '../GVL';
-import {Vendor} from './gvl/Vendor';
-import {Cloneable} from '../Cloneable';
+import { PurposeRestriction } from './PurposeRestriction';
+import { BinarySearchTree } from './BinarySearchTree';
+import { RestrictionType } from './RestrictionType';
+import { GVL } from '../GVL';
+import { Vendor } from './gvl/Vendor';
+import { Cloneable } from '../Cloneable';
 
-export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector> {
-
+export class PurposeRestrictionVector extends Cloneable<
+  PurposeRestrictionVector
+> {
   /**
    * if this originatd from an encoded string we'll need a place to store the
    * bit length; it can be set and got from here
@@ -19,17 +20,21 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    *
    * Using a BST to keep vendors in a sorted order for encoding later
    */
-  private map: Map<string, BinarySearchTree> = new Map<string, BinarySearchTree>();
+  private map: Map<string, BinarySearchTree> = new Map<
+    string,
+    BinarySearchTree
+  >();
   private gvl_: GVL;
 
   private has(hash: string): boolean {
-
     return this.map.has(hash);
-
   }
 
-  private isOkToHave(restrictionType: RestrictionType, purposeId: number, vendorId: number): boolean {
-
+  private isOkToHave(
+    restrictionType: RestrictionType,
+    purposeId: number,
+    vendorId: number
+  ): boolean {
     const vIDStr: string = vendorId.toString();
 
     /**
@@ -38,54 +43,53 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
      * the mess.
      */
     if (this.gvl) {
-
       if (this.gvl.vendors && this.gvl.vendors[vIDStr]) {
-
         const vendor: Vendor = this.gvl.vendors[vIDStr];
 
         if (vendor.flexiblePurposes) {
-
           switch (restrictionType) {
-
             case RestrictionType.NOT_ALLOWED:
-              return (vendor.legIntPurposes.includes(purposeId) || vendor.purposes.includes(purposeId));
+              return (
+                vendor.legIntPurposes.includes(purposeId) ||
+                vendor.purposes.includes(purposeId)
+              );
 
             case RestrictionType.REQUIRE_CONSENT:
-              return (vendor.flexiblePurposes.includes(purposeId) && vendor.legIntPurposes.includes(purposeId));
+              return (
+                vendor.flexiblePurposes.includes(purposeId) &&
+                vendor.legIntPurposes.includes(purposeId)
+              );
 
             case RestrictionType.REQUIRE_LI:
-              return (vendor.flexiblePurposes.includes(purposeId) && vendor.purposes.includes(purposeId));
+              return (
+                vendor.flexiblePurposes.includes(purposeId) &&
+                vendor.purposes.includes(purposeId)
+              );
 
             default:
               // if we made it here, they passed something strange for the
               // restriction type so we ain't gonna add it
               return false;
-
           }
-
         } else if (restrictionType === RestrictionType.NOT_ALLOWED) {
-
           /**
            * if it's "not allowed" we don't care about flexible basis but if
            * they don't even list it, no reason to encode the value so we check
            * both arrays to see if it exists
            */
-          return (vendor.legIntPurposes.includes(purposeId) || vendor.purposes.includes(purposeId));
-
+          return (
+            vendor.legIntPurposes.includes(purposeId) ||
+            vendor.purposes.includes(purposeId)
+          );
         }
-
       } else {
-
         // this vendor doesn't exist
         return false;
-
       }
-
     }
 
     // if the gvl isn't defined, we can't do anything until later
     return true;
-
   }
 
   /**
@@ -96,38 +100,36 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @return {void}
    */
   public add(vendorId: number, purposeRestriction: PurposeRestriction): void {
-
-    if (this.isOkToHave(purposeRestriction.restrictionType, purposeRestriction.purposeId, vendorId)) {
-
+    if (
+      this.isOkToHave(
+        purposeRestriction.restrictionType,
+        purposeRestriction.purposeId,
+        vendorId
+      )
+    ) {
       const hash: string = purposeRestriction.hash;
 
       if (!this.has(hash)) {
-
         this.map.set(hash, new BinarySearchTree());
         this.bitLength = 0;
-
       }
 
       const currentRestrictions = this.getRestrictions(vendorId);
-      currentRestrictions.forEach((curRestriction: PurposeRestriction): void => {
-
-        /**
-         * if this vendor is already restricted under this purpose they can only
-         * be restricted in one way so we'll remove them from the other one.
-         * It's a last value wins result
-         */
-        if (curRestriction.purposeId === purposeRestriction.purposeId) {
-
-          this.remove(vendorId, curRestriction);
-
+      currentRestrictions.forEach(
+        (curRestriction: PurposeRestriction): void => {
+          /**
+           * if this vendor is already restricted under this purpose they can only
+           * be restricted in one way so we'll remove them from the other one.
+           * It's a last value wins result
+           */
+          if (curRestriction.purposeId === purposeRestriction.purposeId) {
+            this.remove(vendorId, curRestriction);
+          }
         }
-
-      });
+      );
 
       (this.map.get(hash) as BinarySearchTree).add(vendorId);
-
     }
-
   }
 
   /**
@@ -141,61 +143,49 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @return {number[]} - Unique ID set of vendors
    */
   public getVendors(purposeRestriction?: PurposeRestriction): number[] {
-
     let vendorIds: number[] = [];
 
     if (purposeRestriction) {
-
       const hash: string = purposeRestriction.hash;
 
       if (this.has(hash)) {
-
         vendorIds = (this.map.get(hash) as BinarySearchTree).get();
-
       }
-
     } else {
-
       const vendorSet = new Set<number>();
 
       this.map.forEach((bst: BinarySearchTree): void => {
-
         bst.get().forEach((vendorId: number): void => {
-
           vendorSet.add(vendorId);
-
         });
-
       });
 
       vendorIds = Array.from(vendorSet);
-
     }
 
     return vendorIds;
-
   }
 
-  public getRestrictionType(vendorId: number, purposeId: number): RestrictionType | undefined {
-
+  public getRestrictionType(
+    vendorId: number,
+    purposeId: number
+  ): RestrictionType | undefined {
     let rType: RestrictionType;
 
-    this.getRestrictions(vendorId).forEach((purposeRestriction: PurposeRestriction): void => {
-
-      if (purposeRestriction.purposeId === purposeId) {
-
-        if (rType === undefined || rType > purposeRestriction.restrictionType) {
-
-          rType = purposeRestriction.restrictionType;
-
+    this.getRestrictions(vendorId).forEach(
+      (purposeRestriction: PurposeRestriction): void => {
+        if (purposeRestriction.purposeId === purposeId) {
+          if (
+            rType === undefined ||
+            rType > purposeRestriction.restrictionType
+          ) {
+            rType = purposeRestriction.restrictionType;
+          }
         }
-
       }
-
-    });
+    );
 
     return rType;
-
   }
 
   /**
@@ -207,19 +197,18 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @return {boolean} - true if the give Vendor ID is under the given Purpose
    * Restriction
    */
-  public vendorHasRestriction(vendorId: number, purposeRestriction: PurposeRestriction): boolean {
-
+  public vendorHasRestriction(
+    vendorId: number,
+    purposeRestriction: PurposeRestriction
+  ): boolean {
     let has = false;
     const restrictions = this.getRestrictions(vendorId);
 
     for (let i = 0; i < restrictions.length && !has; i++) {
-
       has = purposeRestriction.isSameAs(restrictions[i]);
-
     }
 
     return has;
-
   }
 
   /**
@@ -229,57 +218,39 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @return {number} - maximum Vendor ID
    */
   public getMaxVendorId(): number {
-
     let retr = 0;
 
     this.map.forEach((bst: BinarySearchTree): void => {
-
       retr = Math.max(bst.max(), retr);
-
     });
 
     return retr;
-
   }
 
   public getRestrictions(vendorId?: number): PurposeRestriction[] {
-
     const retr: PurposeRestriction[] = [];
 
     this.map.forEach((bst: BinarySearchTree, hash: string): void => {
-
       if (vendorId) {
-
         if (bst.contains(vendorId)) {
-
           retr.push(PurposeRestriction.unHash(hash));
-
         }
-
       } else {
-
         retr.push(PurposeRestriction.unHash(hash));
-
       }
-
     });
 
     return retr;
-
   }
 
   public getPurposes(): number[] {
-
     const purposeIds = new Set<number>();
 
     this.map.forEach((bst: BinarySearchTree, hash: string): void => {
-
       purposeIds.add(PurposeRestriction.unHash(hash).purposeId);
-
     });
 
     return Array.from(purposeIds);
-
   }
 
   /**
@@ -289,25 +260,22 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @param {PurposeRestriction} purposeRestriction
    * @return {void}
    */
-  public remove(vendorId: number, purposeRestriction: PurposeRestriction): void {
-
+  public remove(
+    vendorId: number,
+    purposeRestriction: PurposeRestriction
+  ): void {
     const hash: string = purposeRestriction.hash;
     const bst: BinarySearchTree | undefined = this.map.get(hash);
 
     if (bst) {
-
       bst.remove(vendorId);
 
       // if it's empty let's delete the key so it doesn't show up empty
       if (bst.isEmpty()) {
-
         this.map.delete(hash);
         this.bitLength = 0;
-
       }
-
     }
-
   }
 
   /**
@@ -317,9 +285,7 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @param {GVL} value - the GVL instance
    */
   public set gvl(value: GVL) {
-
     if (!this.gvl_) {
-
       this.gvl_ = value;
 
       /**
@@ -327,28 +293,26 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
        * go through and remove some if they're not valid
        */
       if (this.numRestrictions) {
-
         this.map.forEach((bst: BinarySearchTree, hash: string): void => {
-
-          const purposeRestriction: PurposeRestriction = PurposeRestriction.unHash(hash);
+          const purposeRestriction: PurposeRestriction = PurposeRestriction.unHash(
+            hash
+          );
           const vendors: number[] = bst.get();
 
           vendors.forEach((vendorId: number): void => {
-
-            if (!this.isOkToHave(purposeRestriction.restrictionType, purposeRestriction.purposeId, vendorId)) {
-
+            if (
+              !this.isOkToHave(
+                purposeRestriction.restrictionType,
+                purposeRestriction.purposeId,
+                vendorId
+              )
+            ) {
               bst.remove(vendorId);
-
             }
-
           });
-
         });
-
       }
-
     }
-
   }
 
   /**
@@ -357,9 +321,7 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @return {GVL}
    */
   public get gvl(): GVL {
-
     return this.gvl_;
-
   }
 
   /**
@@ -368,10 +330,8 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @return {boolean}
    */
   public isEmpty(): boolean {
-
     return this.map.size === 0;
-
-  };
+  }
 
   /**
    * isEncodable - The Vector will add restrictions even if they are not
@@ -383,9 +343,7 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @return {boolean}
    */
   public isEncodable(): boolean {
-
     return this.gvl_ !== undefined || this.isEmpty();
-
   }
 
   /**
@@ -394,9 +352,6 @@ export class PurposeRestrictionVector extends Cloneable<PurposeRestrictionVector
    * @return {number}
    */
   public get numRestrictions(): number {
-
     return this.map.size;
-
   }
-
 }

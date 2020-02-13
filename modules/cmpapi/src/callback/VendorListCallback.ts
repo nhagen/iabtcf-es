@@ -1,3 +1,3 @@
-import {VendorList} from '@iabtcf/core';
+import { VendorList } from '@iabtcf/core';
 
 export type VendorListCallback = (gvl: VendorList, success: true) => void;

@@ -1,28 +1,22 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import * as sinon from 'sinon';
-import {Json} from '../src/Json';
-import {XMLHttpTestTools} from '@iabtcf/testing';
+import { Json } from '../src/Json';
+import { XMLHttpTestTools } from '@iabtcf/testing';
 
 describe('Json->fetch', (): void => {
-
   const responseObj: object = {
-    foo: 'bar',
+    foo: 'bar'
   };
 
   it('should fetch and parse a json with only a url', (done: () => void): void => {
-
     Json.fetch('blah')
       .then((response: object): void => {
-
         expect(response).to.deep.equal(responseObj);
         done();
-
       })
       .catch((error: Error): void => {
-
         expect.fail('an error occured: ' + error.message);
         done();
-
       });
 
     expect(XMLHttpTestTools.requests.length).to.equal(1);
@@ -32,45 +26,33 @@ describe('Json->fetch', (): void => {
     expect(req.method).to.equal('GET');
 
     req.respond(200, XMLHttpTestTools.JSON_HEADER, JSON.stringify(responseObj));
-
   });
 
   it('should fail if a 404 returned', (done: () => void): void => {
-
     Json.fetch('blah')
       .then((): void => {
-
         expect.fail('should have errored out');
         done();
-
       })
       .catch((error: Error): void => {
-
         expect(error.message).to.include('404');
         done();
-
       });
 
     XMLHttpTestTools.requests[0].respond(404, {}, '');
 
     expect(XMLHttpTestTools.requests.length).to.equal(1);
-
   });
 
   it('should fail if a network error occurs', (done: () => void): void => {
-
     Json.fetch('blah')
       .then((): void => {
-
         expect.fail('should have errored out');
         done();
-
       })
       .catch((error: Error): void => {
-
         expect(error.message).to.include('error');
         done();
-
       });
 
     const req: sinon.SinonFakeXMLHttpRequest = XMLHttpTestTools.requests[0];
@@ -78,7 +60,6 @@ describe('Json->fetch', (): void => {
     expect(req.method).to.equal('GET');
 
     req.error();
-
   });
 
   /**
@@ -107,5 +88,4 @@ describe('Json->fetch', (): void => {
 
   });
   */
-
 });

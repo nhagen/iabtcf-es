@@ -1,14 +1,20 @@
-import {TCModel, TCString, PurposeRestriction, PurposeRestrictionVector, Vector, IdBoolTuple} from '@iabtcf/core';
+import {
+  TCModel,
+  TCString,
+  PurposeRestriction,
+  PurposeRestrictionVector,
+  Vector,
+  IdBoolTuple
+} from '@iabtcf/core';
 
-import {CmpApiModel} from '../CmpApiModel';
-import {BooleanVector} from './BooleanVector';
-import {Restrictions} from './Restrictions';
-import {Booleany} from './Booleany';
-import {Response} from './Response';
-import {EventStatus, CmpStatus} from '../status';
+import { CmpApiModel } from '../CmpApiModel';
+import { BooleanVector } from './BooleanVector';
+import { Restrictions } from './Restrictions';
+import { Booleany } from './Booleany';
+import { Response } from './Response';
+import { EventStatus, CmpStatus } from '../status';
 
 export class TCData extends Response {
-
   public tcString: string;
   public eventStatus: EventStatus;
   public cmpStatus: CmpStatus;
@@ -18,33 +24,24 @@ export class TCData extends Response {
   public purposeOneTreatment: Booleany;
 
   public outOfBand: {
-
     allowedVendors: BooleanVector | string;
     disclosedVendors: BooleanVector | string;
-
   };
   public purpose: {
-
     consents: BooleanVector | string;
     legitimateInterests: BooleanVector | string;
-
   };
   public vendor: {
-
     consents: BooleanVector | string;
     legitimateInterests: BooleanVector | string;
-
   };
   public specialFeatureOptins: BooleanVector | string;
   public publisher: {
-
     consents: BooleanVector | string;
     legitimateInterests: BooleanVector | string;
     customPurpose: {
-
       consents: BooleanVector | string;
       legitimateInterests: BooleanVector | string;
-
     };
     restrictions: Restrictions;
   };
@@ -54,7 +51,6 @@ export class TCData extends Response {
    * @param {number[]} vendorIds - if not undefined, will be used to filter vendor ids
    */
   public constructor(vendorIds?: number[]) {
-
     super();
 
     const tcModel = CmpApiModel.tcModel as TCModel;
@@ -68,36 +64,44 @@ export class TCData extends Response {
 
     this.outOfBand = {
       allowedVendors: this.createVectorField(tcModel.vendorsAllowed, vendorIds),
-      disclosedVendors: this.createVectorField(tcModel.vendorsDisclosed, vendorIds),
+      disclosedVendors: this.createVectorField(
+        tcModel.vendorsDisclosed,
+        vendorIds
+      )
     };
 
     this.purpose = {
-
       consents: this.createVectorField(tcModel.purposeConsents),
-      legitimateInterests: this.createVectorField(tcModel.purposeLegitimateInterest),
-
+      legitimateInterests: this.createVectorField(
+        tcModel.purposeLegitimateInterest
+      )
     };
 
     this.vendor = {
       consents: this.createVectorField(tcModel.vendorConsents, vendorIds),
-      legitimateInterests: this.createVectorField(tcModel.vendorLegitimateInterest, vendorIds),
+      legitimateInterests: this.createVectorField(
+        tcModel.vendorLegitimateInterest,
+        vendorIds
+      )
     };
 
-    this.specialFeatureOptins = this.createVectorField(tcModel.specialFeatureOptIns);
+    this.specialFeatureOptins = this.createVectorField(
+      tcModel.specialFeatureOptIns
+    );
 
     this.publisher = {
-
       consents: this.createVectorField(tcModel.publisherConsents),
-      legitimateInterests: this.createVectorField(tcModel.publisherLegitimateInterest),
+      legitimateInterests: this.createVectorField(
+        tcModel.publisherLegitimateInterest
+      ),
       customPurpose: {
-
         consents: this.createVectorField(tcModel.publisherCustomConsents),
-        legitimateInterests: this.createVectorField(tcModel.publisherCustomLegitimateInterest),
-
+        legitimateInterests: this.createVectorField(
+          tcModel.publisherCustomLegitimateInterest
+        )
       },
-      restrictions: this.createRestrictions(tcModel.publisherRestrictions),
+      restrictions: this.createRestrictions(tcModel.publisherRestrictions)
     };
-
   }
 
   /**
@@ -105,39 +109,33 @@ export class TCData extends Response {
    * @param {PurposeRestrictionVector} purpRestrictions
    * @return {Restrictions}
    */
-  protected createRestrictions(purpRestrictions: PurposeRestrictionVector): Restrictions {
-
+  protected createRestrictions(
+    purpRestrictions: PurposeRestrictionVector
+  ): Restrictions {
     const retr = {};
 
     if (purpRestrictions.numRestrictions > 0) {
-
       const max = purpRestrictions.getMaxVendorId();
 
       for (let vendorId = 1; vendorId <= max; vendorId++) {
-
         const strVendorId = vendorId.toString();
         // vendors restrictions
-        purpRestrictions.getRestrictions(vendorId).forEach((pRestrict: PurposeRestriction): void => {
+        purpRestrictions
+          .getRestrictions(vendorId)
+          .forEach((pRestrict: PurposeRestriction): void => {
+            const strPurpId = pRestrict.purposeId.toString();
 
-          const strPurpId = pRestrict.purposeId.toString();
+            if (!retr[strPurpId]) {
+              retr[strPurpId] = {};
+            }
 
-          if (!retr[strPurpId]) {
-
-            retr[strPurpId] = {};
-
-          }
-
-          retr[strPurpId][strVendorId] = pRestrict.restrictionType;
-
-        });
-
+            retr[strPurpId][strVendorId] = pRestrict.restrictionType;
+          });
       }
-
     }
 
     return retr;
-
-  };
+  }
 
   /**
    * Creates a string bit field with a value for each id where each value is
@@ -147,26 +145,23 @@ export class TCData extends Response {
    * @param {number[]} ids filter
    * @return {BooleanVector | string}
    */
-  protected createVectorField(vector: Vector, ids?: number[]): BooleanVector | string {
-
+  protected createVectorField(
+    vector: Vector,
+    ids?: number[]
+  ): BooleanVector | string {
     if (ids) {
-
       return ids.reduce<BooleanVector>((booleanVector, obj): BooleanVector => {
-
         booleanVector[obj + ''] = vector.has(+obj);
         return booleanVector;
-
       }, {});
-
     }
 
-    return [...vector].reduce<BooleanVector>((booleanVector, keys: IdBoolTuple): BooleanVector => {
-
-      booleanVector[keys[0].toString(10)] = keys[1];
-      return booleanVector;
-
-    }, {});
-
+    return [...vector].reduce<BooleanVector>(
+      (booleanVector, keys: IdBoolTuple): BooleanVector => {
+        booleanVector[keys[0].toString(10)] = keys[1];
+        return booleanVector;
+      },
+      {}
+    );
   }
-
 }

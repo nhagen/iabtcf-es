@@ -1,7 +1,8 @@
 {
   "name": "@iabtcf/cmpapi",
   "version": "1.0.0-beta.7",
-  "description": "Ensures other in-page digital marketing technologies have access to CMP transparency and consent information for the iab. Transparency and Consent Framework (TCF).",
+  "description":
+    "Ensures other in-page digital marketing technologies have access to CMP transparency and consent information for the iab. Transparency and Consent Framework (TCF).",
   "author": "Chris Paterson <tcf@chrispaterson.io>",
   "homepage": "https://github.com/chrispaterson/iabtcf/tree/master/cmpapi/",
   "license": {
@@ -10,9 +11,7 @@
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": [
-    "lib/**/*"
-  ],
+  "files": ["lib/**/*"],
   "scripts": {
     "docs": "typedoc --ignoreCompilerErrors --tsconfig ./tsconfig.json  src",
     "prepack": "yarn run build",
@@ -22,7 +21,8 @@
     "debug": "ndb yarn test --no-timeouts",
     "serve:cov": "npx http-server ./coverage/",
     "test": "mocha `find test -name '*.test.ts'`",
-    "test:cov": "rm -rf coverage; nyc --reporter=html mocha `find test -name '*.test.ts'`",
+    "test:cov":
+      "rm -rf coverage; nyc --reporter=html mocha `find test -name '*.test.ts'`",
     "test:lcov": "nyc --reporter=lcov mocha `find test -name '*.test.ts'`"
   },
   "dependencies": {
@@ -62,9 +62,7 @@
     "typedoc": "^0.14.2",
     "typescript": "^3.7.0"
   },
-  "eslintIgnore": [
-    "lib"
-  ],
+  "eslintIgnore": ["lib"],
   "publishConfig": {
     "access": "public"
   },

@@ -1,4 +1,4 @@
-import {GVLMapItem} from './GVLMapItem';
+import { GVLMapItem } from './GVLMapItem';
 
 export interface Stack extends GVLMapItem {
   purposes: number[];

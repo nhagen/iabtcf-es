@@ -8,5 +8,5 @@
  * };
  * ```
  */
-import {IntMap} from './IntMap';
-export type KeyMap<T> = IntMap<T>
+import { IntMap } from './IntMap';
+export type KeyMap<T> = IntMap<T>;

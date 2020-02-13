@@ -3,17 +3,17 @@
   "version": "1.0.0-beta.7",
   "description": "CMP API Stub code",
   "author": "Chris Paterson <tcf@chrispaterson.io>",
-  "homepage": "https://github.com/chrispaterson/iabtcf/tree/master/modules/cli/",
+  "homepage":
+    "https://github.com/chrispaterson/iabtcf/tree/master/modules/cli/",
   "license": {
     "type": "Apache-2.0",
     "url": "https://opensource.org/licenses/apache2.0.php"
   },
   "main": "lib/stub.js",
-  "files": [
-    "lib/stub.js"
-  ],
+  "files": ["lib/stub.js"],
   "scripts": {
-    "build": "rm -rf lib && mkdir lib ; babel src/stub.js | terser -m -c --source-map url='stub.js.map' -o lib/stub.js",
+    "build":
+      "rm -rf lib && mkdir lib ; babel src/stub.js | terser -m -c --source-map url='stub.js.map' -o lib/stub.js",
     "build:dev": "rm -rf lib && ln -s src lib",
     "prepack": "yarn run build",
     "lint": "exit 0"

@@ -10,10 +10,7 @@
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": [
-    "lib/*",
-    "lib/**/*"
-  ],
+  "files": ["lib/*", "lib/**/*"],
   "scripts": {
     "build": "../build ; cp -r src/vendorlist lib/",
     "prepack": "yarn run build",
@@ -38,9 +35,7 @@
     "ts-node": "^8.3.0",
     "typescript": "3.7.2"
   },
-  "eslintIgnore": [
-    "lib"
-  ],
+  "eslintIgnore": ["lib"],
   "keywords": [
     "interactive",
     "advertising",

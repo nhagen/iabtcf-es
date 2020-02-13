@@ -4,7 +4,6 @@
  * change their legal basis for processing in the encoding.
  */
 export enum RestrictionType {
-
   /**
    * under no circumstances is this purpose allowed.
    */
@@ -18,6 +17,5 @@ export enum RestrictionType {
   /**
    * if the default declaration is consent then this flips the purpose to Legitimate Interest in the encoding.
    */
-  REQUIRE_LI = 2,
-
+  REQUIRE_LI = 2
 }

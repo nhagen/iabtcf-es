@@ -1,23 +1,13 @@
-import {SequenceVersionMap} from './SequenceVersionMap';
-import {TCModel} from '../../';
-import {
-  Segments,
-  Fields,
-} from '../../model';
+import { SequenceVersionMap } from './SequenceVersionMap';
+import { TCModel } from '../../';
+import { Segments, Fields } from '../../model';
 
 export class SegmentSequence implements SequenceVersionMap {
-
-  public '1': string[] = [
-    Segments.core,
-  ]
-  public '2': string[] = [
-    Segments.core,
-  ]
+  public '1': string[] = [Segments.core];
+  public '2': string[] = [Segments.core];
 
   public constructor(tcModel: TCModel, isForSaving: boolean) {
-
     if (tcModel.isServiceSpecific) {
-
       /**
        * If it's service specific only, then the publisher TC String can be
        * stored in the cookie and would be transmitted if it's not for
@@ -25,13 +15,9 @@ export class SegmentSequence implements SequenceVersionMap {
        */
 
       if (isForSaving) {
-
         this['2'].push(Segments.publisherTC);
-
       }
-
     } else {
-
       /**
        * this is a globally scoped string.
        *
@@ -40,9 +26,7 @@ export class SegmentSequence implements SequenceVersionMap {
        */
 
       if (tcModel[Fields.vendorsDisclosed].size > 0) {
-
         this['2'].push(Segments.vendorsDisclosed);
-
       }
 
       /**
@@ -53,20 +37,13 @@ export class SegmentSequence implements SequenceVersionMap {
        */
 
       if (!isForSaving) {
-
         // if there is a vendorsAllowed then we should add it
         if (tcModel[Fields.vendorsAllowed].size > 0) {
-
           this['2'].push(Segments.vendorsAllowed);
-
         }
 
         this['2'].push(Segments.publisherTC);
-
       }
-
     }
-
   }
-
 }

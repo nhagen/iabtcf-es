@@ -1,7 +1,5 @@
-import {XMLHttpTestTools} from '@iabtcf/testing';
+import { XMLHttpTestTools } from '@iabtcf/testing';
 
 beforeEach((): void => {
-
   XMLHttpTestTools.beforeEach();
-
 });

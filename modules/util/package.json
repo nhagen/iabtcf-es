@@ -3,16 +3,15 @@
   "version": "1.0.0-beta.7",
   "description": "Shared Utilties for the iabtcf",
   "author": "Chris Paterson <tcf@chrispaterson.io>",
-  "homepage": "https://github.com/chrispaterson/iabtcf/tree/master/modules/core/",
+  "homepage":
+    "https://github.com/chrispaterson/iabtcf/tree/master/modules/core/",
   "license": {
     "type": "Apache-2.0",
     "url": "https://opensource.org/licenses/apache2.0.php"
   },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": [
-    "lib/**/*"
-  ],
+  "files": ["lib/**/*"],
   "scripts": {
     "prepack": "yarn run build",
     "build": "../build",
@@ -20,8 +19,10 @@
     "lint:fix": "yarn run lint -- --fix",
     "debug": "ndb yarn test --no-timeouts",
     "serve:cov": "npx http-server ./coverage/",
-    "test": "cd ../testing && yarn build && cd - && mocha `find test -name '*.test.ts'`",
-    "test:cov": "rm -rf coverage; nyc --reporter=html mocha `find test -name '*.test.ts'`",
+    "test":
+      "cd ../testing && yarn build && cd - && mocha `find test -name '*.test.ts'`",
+    "test:cov":
+      "rm -rf coverage; nyc --reporter=html mocha `find test -name '*.test.ts'`",
     "test:lcov": "nyc --reporter=lcov mocha `find test -name '*.test.ts'`"
   },
   "devDependencies": {
@@ -49,9 +50,7 @@
     "ts-node": "^8.3.0",
     "typescript": "^3.7.0"
   },
-  "eslintIgnore": [
-    "lib"
-  ],
+  "eslintIgnore": ["lib"],
   "publishConfig": {
     "access": "public"
   },

@@ -4,7 +4,6 @@
  * @extends {Error}
  */
 class GVLError extends Error {
-
   /**
    * constructor - constructs a GVLError
    *
@@ -12,12 +11,9 @@ class GVLError extends Error {
    * @return {undefined}
    */
   public constructor(msg: string) {
-
     super(msg);
     this.name = 'GVLError';
-
   }
-
 }
 
-export {GVLError};
+export { GVLError };
